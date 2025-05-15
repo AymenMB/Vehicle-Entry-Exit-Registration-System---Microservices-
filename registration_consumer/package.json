@@ -1,0 +1,28 @@
+{
+  "name": "vehicle-registration-consumer",
+  "version": "1.0.0",
+  "description": "Kafka consumer for vehicle registration events",
+  "main": "registration_consumer.js",
+  "scripts": {
+    "start": "node registration_consumer.js",
+    "dev": "nodemon registration_consumer.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "winston": "^3.9.0",
+    "mongoose": "^8.14.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "keywords": [
+    "kafka",
+    "consumer",
+    "microservices",
+    "vehicle-registration"
+  ],
+  "author": "",
+  "license": "ISC"
+}

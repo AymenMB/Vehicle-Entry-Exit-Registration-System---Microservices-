@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Registration Database Browser</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0066ff;
+            --secondary-color: #001e3c;
+            --accent-color: #00d4ff;
+            --success-color: #00c853;
+            --warning-color: #f59e0b;
+            --danger-color: #ff3d00;
+            --dark-color: #121212;
+            --light-color: rgba(255, 255, 255, 0.87);
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --card-border: rgba(255, 255, 255, 0.2);
+            --text-color: #333;
+            --text-muted: #6c757d;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, var(--secondary-color), #000);
+            color: var(--light-color);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(0, 12, 30, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--accent-color) !important;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .navbar-brand i {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            margin: 0 5px;
+        }
+        
+        .nav-link:hover {
+            color: var(--accent-color) !important;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-link i {
+            margin-right: 5px;
+        }
+        
+        /* White Card Styles */
+        .registration-card {
+            margin-bottom: 20px;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            border: none;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        .registration-card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+            transform: translateY(-5px);
+        }
+        
+        .registration-card .card-header {
+            background: #f8f9fa;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 1rem 1.5rem;
+            color: var(--text-color);
+        }
+        
+        .registration-card .card-body {
+            padding: 1.5rem;
+            color: var(--text-color);
+            background: white;
+        }
+        
+        .badge-entry {
+            background-color: var(--success-color);
+            padding: 0.4rem 0.8rem;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+        
+        .badge-exit {
+            background-color: var(--danger-color);
+            padding: 0.4rem 0.8rem;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+        
+        .search-container {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            color: var(--text-color);
+        }
+        
+        .stats-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 1.2rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid var(--primary-color);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .stats-card h2 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            margin: 0.5rem 0;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stats-card h5 {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin: 0;
+        }
+        
+        /* Form controls in dark theme but white search box */
+        .form-control {
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: white;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
+            border-color: var(--primary-color);
+        }
+        
+        .form-control::placeholder {
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .form-select {
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: var(--text-color);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+        }
+        
+        .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.25);
+            border-color: var(--primary-color);
+        }
+        
+        .form-label {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        
+        /* Rest of styles remain dark themed */
+        .page-link {
+            border-radius: 6px;
+            margin: 0 3px;
+            color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .page-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent-color);
+        }
+        
+        .page-item.active .page-link {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-color: var(--primary-color);
+        }
+        
+        .page-item.disabled .page-link {
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            color: var(--text-color);
+        }
+        
+        .modal-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-footer {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-close {
+            filter: none;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(90deg, #fff, var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 102, 255, 0.3);
+        }
+        
+        .section-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+        
+        .toast-container {
+            z-index: 1060;
+        }
+        
+        /* Updated text colors for card content */
+        .registration-card .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        .registration-card .card-subtitle {
+            color: var(--text-muted) !important;
+            font-weight: 600;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Additional styles */
+        .btn {
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 102, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 102, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            color: white;
+        }
+        
+        .btn-outline-danger {
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        
+        .btn-outline-danger:hover {
+            background-color: var(--danger-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-database"></i>
+                Vehicle Registration Database
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="refreshButton">
+                            <i class="fas fa-sync-alt"></i> Refresh Data
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" id="mainApp">
+                            <i class="fas fa-home"></i> Back to Main App
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Vehicle Registration Database Browser</h1>
+        
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Registrations</h5>
+                        <h2 id="totalCount">-</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Entries</h5>
+                        <h2 id="entryCount">-</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Exits</h5>
+                        <h2 id="exitCount">-</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card">
+                    <div class="card-body">
+                        <h5 class="card-title">Unique Vehicles</h5>
+                        <h2 id="uniqueVehicles">-</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="search-container">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="searchType">Filter by Type:</label>
+                        <select id="searchType" class="form-control">
+                            <option value="all">All</option>
+                            <option value="entry">Entry</option>
+                            <option value="exit">Exit</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="searchPlate">Search by Plate:</label>
+                        <input type="text" id="searchPlate" class="form-control" placeholder="Enter plate number">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="searchCIN">Search by CIN:</label>
+                        <input type="text" id="searchCIN" class="form-control" placeholder="Enter CIN number">
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col">
+                    <button id="applyFilters" class="btn btn-primary">Apply Filters</button>
+                    <button id="resetFilters" class="btn btn-secondary">Reset Filters</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="registrationsContainer" class="row">
+            <!-- Registration cards will be populated here -->
+            <div class="col-12 text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p>Loading registrations...</p>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        <nav aria-label="Registration pagination" class="my-4">
+            <ul class="pagination justify-content-center" id="pagination">
+                <!-- Pagination will be populated here -->
+            </ul>
+        </nav>
+        
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this registration?</p>
+                        <p><strong>ID:</strong> <span id="deleteId"></span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Configuration
+        const API_URL = '/api';
+        const ITEMS_PER_PAGE = 10;
+        
+        // Global state
+        let allRegistrations = [];
+        let filteredRegistrations = [];
+        let currentPage = 1;
+        let deleteRegistrationId = null;
+        
+        // DOM Elements
+        const registrationsContainer = document.getElementById('registrationsContainer');
+        const searchType = document.getElementById('searchType');
+        const searchPlate = document.getElementById('searchPlate');
+        const searchCIN = document.getElementById('searchCIN');
+        const applyFilters = document.getElementById('applyFilters');
+        const resetFilters = document.getElementById('resetFilters');
+        const refreshButton = document.getElementById('refreshButton');
+        const pagination = document.getElementById('pagination');
+        const totalCount = document.getElementById('totalCount');
+        const entryCount = document.getElementById('entryCount');
+        const exitCount = document.getElementById('exitCount');
+        const uniqueVehicles = document.getElementById('uniqueVehicles');
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        const deleteIdSpan = document.getElementById('deleteId');
+        const confirmDelete = document.getElementById('confirmDelete');
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRegistrations();
+            
+            // Event Listeners
+            applyFilters.addEventListener('click', filterRegistrations);
+            resetFilters.addEventListener('click', resetFilterValues);
+            refreshButton.addEventListener('click', loadRegistrations);
+            confirmDelete.addEventListener('click', deleteRegistration);
+        });
+        
+        // Load all registrations from API
+        async function loadRegistrations() {
+            try {
+                const response = await fetch(`${API_URL}/registrations`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allRegistrations = data.registrations;
+                    filteredRegistrations = [...allRegistrations];
+                    updateStats();
+                    renderRegistrations();
+                } else {
+                    showError('Failed to load registrations');
+                }
+            } catch (error) {
+                console.error('Error loading registrations:', error);
+                showError('Failed to load registrations. Please check your connection.');
+            }
+        }
+        
+        // Update statistics
+        function updateStats() {
+            totalCount.textContent = allRegistrations.length;
+            
+            const entries = allRegistrations.filter(r => r.type === 'entry').length;
+            const exits = allRegistrations.filter(r => r.type === 'exit').length;
+            
+            entryCount.textContent = entries;
+            exitCount.textContent = exits;
+            
+            // Count unique vehicles based on plate numbers
+            const plates = new Set();
+            allRegistrations.forEach(r => {
+                if (r.plateData && r.plateData.plateNumber) {
+                    plates.add(r.plateData.plateNumber);
+                }
+            });
+            
+            uniqueVehicles.textContent = plates.size;
+        }
+        
+        // Filter registrations based on search criteria
+        function filterRegistrations() {
+            const typeValue = searchType.value;
+            const plateValue = searchPlate.value.trim().toLowerCase();
+            const cinValue = searchCIN.value.trim().toLowerCase();
+            
+            filteredRegistrations = allRegistrations.filter(reg => {
+                // Type filter
+                if (typeValue !== 'all' && reg.type !== typeValue) {
+                    return false;
+                }
+                
+                // Plate filter
+                if (plateValue && (!reg.plateData || !reg.plateData.plateNumber || !reg.plateData.plateNumber.toLowerCase().includes(plateValue))) {
+                    return false;
+                }
+                
+                // CIN filter
+                if (cinValue && (!reg.cinData || !reg.cinData.idNumber || !reg.cinData.idNumber.toLowerCase().includes(cinValue))) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            currentPage = 1;
+            renderRegistrations();
+        }
+        
+        // Reset all filter values
+        function resetFilterValues() {
+            searchType.value = 'all';
+            searchPlate.value = '';
+            searchCIN.value = '';
+            
+            filteredRegistrations = [...allRegistrations];
+            currentPage = 1;
+            renderRegistrations();
+        }
+        
+        // Render registrations with pagination
+        function renderRegistrations() {
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const paginatedRegistrations = filteredRegistrations.slice(startIndex, endIndex);
+            
+            registrationsContainer.innerHTML = '';
+            
+            if (filteredRegistrations.length === 0) {
+                registrationsContainer.innerHTML = `
+                    <div class="col-12 text-center mt-4">
+                        <p>No registrations found. Try adjusting your filters.</p>
+                    </div>
+                `;
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            paginatedRegistrations.forEach(registration => {
+                registrationsContainer.appendChild(createRegistrationCard(registration));
+            });
+            
+            renderPagination();
+        }
+        
+        // Create a card for a single registration
+        function createRegistrationCard(registration) {
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+            
+            const typeClass = registration.type === 'entry' ? 'badge-entry' : 'badge-exit';
+            const typeText = registration.type === 'entry' ? 'Entry' : 'Exit';
+            
+            const timestamp = new Date(registration.timestamp);
+            const formattedDate = timestamp.toLocaleString();
+            
+            let plateHtml = '<p class="text-muted">No plate data</p>';
+            if (registration.plateData && registration.plateData.plateNumber) {
+                const confidence = registration.plateData.confidence 
+                    ? `<small class="text-muted">(${Math.round(registration.plateData.confidence * 100)}% confidence)</small>` 
+                    : '';
+                plateHtml = `<h5>${registration.plateData.plateNumber} ${confidence}</h5>`;
+            }
+            
+            let cinHtml = '<p class="text-muted">No CIN data</p>';
+            if (registration.cinData) {
+                const name = registration.cinData.firstName || registration.cinData.name || '';
+                const lastName = registration.cinData.lastName || registration.cinData.lastname || '';
+                const idNumber = registration.cinData.idNumber || '';
+                
+                cinHtml = `
+                    <h5>${idNumber}</h5>
+                    <p>${name} ${lastName}</p>
+                `;
+            }
+            
+            col.innerHTML = `
+                <div class="card registration-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge ${typeClass}">${typeText}</span>
+                            <small class="text-muted ms-2">${formattedDate}</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${registration.registrationId}">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="card-subtitle mb-2 text-muted">Plate Information</h6>
+                                ${plateHtml}
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="card-subtitle mb-2 text-muted">CIN Information</h6>
+                                ${cinHtml}
+                            </div>
+                        </div>
+                        <hr>
+                        <small class="text-muted">Registration ID: ${registration.registrationId}</small>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listener for delete button
+            col.querySelector('.delete-btn').addEventListener('click', () => {
+                showDeleteModal(registration.registrationId);
+            });
+            
+            return col;
+        }
+        
+        // Render pagination controls
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredRegistrations.length / ITEMS_PER_PAGE);
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            let paginationHtml = `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
+                </li>
+            `;
+            
+            const maxDisplayedPages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxDisplayedPages / 2));
+            let endPage = Math.min(totalPages, startPage + maxDisplayedPages - 1);
+            
+            if (endPage - startPage + 1 < maxDisplayedPages) {
+                startPage = Math.max(1, endPage - maxDisplayedPages + 1);
+            }
+            
+            if (startPage > 1) {
+                paginationHtml += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="1">1</a>
+                    </li>
+                `;
+                
+                if (startPage > 2) {
+                    paginationHtml += `
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">...</a>
+                        </li>
+                    `;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHtml += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `;
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHtml += `
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#">...</a>
+                        </li>
+                    `;
+                }
+                
+                paginationHtml += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a>
+                    </li>
+                `;
+            }
+            
+            paginationHtml += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
+                </li>
+            `;
+            
+            pagination.innerHTML = paginationHtml;
+            
+            // Add event listeners for pagination buttons
+            pagination.querySelectorAll('.page-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageNum = parseInt(e.target.dataset.page);
+                    if (!isNaN(pageNum)) {
+                        currentPage = pageNum;
+                        renderRegistrations();
+                        window.scrollTo(0, 0);
+                    }
+                });
+            });
+        }
+        
+        // Show deletion confirmation modal
+        function showDeleteModal(registrationId) {
+            deleteRegistrationId = registrationId;
+            deleteIdSpan.textContent = registrationId;
+            deleteModal.show();
+        }
+        
+        // Delete a registration
+        async function deleteRegistration() {
+            if (!deleteRegistrationId) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/registrations/${deleteRegistrationId}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Remove from arrays
+                    allRegistrations = allRegistrations.filter(r => r.registrationId !== deleteRegistrationId);
+                    filteredRegistrations = filteredRegistrations.filter(r => r.registrationId !== deleteRegistrationId);
+                    
+                    // Update UI
+                    updateStats();
+                    renderRegistrations();
+                    
+                    // Show success message
+                    showToast('Registration deleted successfully', 'success');
+                } else {
+                    showToast(`Failed to delete: ${data.error}`, 'danger');
+                }
+            } catch (error) {
+                console.error('Error deleting registration:', error);
+                showToast('Failed to delete registration', 'danger');
+            } finally {
+                deleteModal.hide();
+                deleteRegistrationId = null;
+            }
+        }
+        
+        // Show error message
+        function showError(message) {
+            registrationsContainer.innerHTML = `
+                <div class="col-12 text-center mt-4">
+                    <div class="alert alert-danger">
+                        ${message}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toastContainer = document.createElement('div');
+            toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            
+            toastContainer.innerHTML = `
+                <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(toastContainer);
+            
+            const toastElement = toastContainer.querySelector('.toast');
+            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+            
+            toast.show();
+            
+            toastElement.addEventListener('hidden.bs.toast', () => {
+                document.body.removeChild(toastContainer);
+            });
+        }
+    </script>
+</body>
+</html>

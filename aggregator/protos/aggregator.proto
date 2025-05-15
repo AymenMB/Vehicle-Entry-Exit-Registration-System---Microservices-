@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package aggregator;
+
+// The aggregator service definition
+service AggregatorService {
+  // Process vehicle entry registration
+  rpc RegisterEntry (RegistrationRequest) returns (RegistrationResponse) {}
+  
+  // Process vehicle exit registration
+  rpc RegisterExit (RegistrationRequest) returns (RegistrationResponse) {}
+  
+  // Health check
+  rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse) {}
+}
+
+// Registration request message
+message RegistrationRequest {
+  bytes cin_image = 1;
+  string cin_filename = 2;
+  bytes vehicle_image = 3;
+  string vehicle_filename = 4;
+}
+
+// CIN data message
+message CinData {
+  bool success = 1;
+  string id_number = 2;
+  string name = 3;
+  string lastname = 4;
+  float confidence_id = 5;
+  float confidence_name = 6;
+  float confidence_lastname = 7;
+  string error = 8;
+}
+
+// Plate detection data message
+message PlateData {
+  bool success = 1;
+  string plate_number = 2;
+  float confidence = 3;
+  string error = 4;
+}
+
+// Registration response message
+message RegistrationResponse {
+  bool success = 1;
+  CinData cin_data = 2;
+  PlateData plate_data = 3;
+  string registration_id = 4;
+  string timestamp = 5;
+  string type = 6;  // "entry" or "exit"
+  string error = 7;
+}
+
+// Health check request message
+message HealthCheckRequest {}
+
+// Health check response message
+message HealthCheckResponse {
+  string status = 1;
+  string cin_service = 2;
+  string plate_service = 3;
+  string error = 4;
+}

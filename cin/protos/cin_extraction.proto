@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package cinextraction;
+
+// The CIN extraction service definition
+service CinExtractionService {
+  // Send a CIN image and receive extraction results
+  rpc ExtractCinData (CinRequest) returns (CinResponse) {}
+}
+
+// The request message containing the CIN image
+message CinRequest {
+  bytes image_data = 1;  // The image as bytes
+  string filename = 2;    // Original filename (optional)
+}
+
+// The response message containing the extracted CIN information
+message CinResponse {
+  string id_number = 1;       // Extracted ID number
+  string name = 2;            // Extracted name
+  string lastname = 3;        // Extracted lastname
+  // Add other fields as needed, e.g., date_of_birth, place_of_birth
+  string error_message = 4;   // Error message if any
+  bool success = 5;           // Whether the extraction was successful
+  float confidence_id = 6;    // Confidence for ID number
+  float confidence_name = 7;  // Confidence for name
+  float confidence_lastname = 8; // Confidence for lastname
+}

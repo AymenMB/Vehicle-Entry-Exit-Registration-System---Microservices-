@@ -1,0 +1,28 @@
+{
+  "name": "vehicle-entry-aggregator",
+  "version": "1.0.0",
+  "description": "Aggregator service for Vehicle Entry/Exit System",
+  "main": "app.js",  "scripts": {
+    "start": "node aggregator_service.js",
+    "dev": "nodemon aggregator_service.js",
+    "start-service": "node aggregator_service.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },  "dependencies": {
+    "@grpc/grpc-js": "^1.8.14",
+    "@grpc/proto-loader": "^0.7.7",
+    "morgan": "^1.10.0",
+    "winston": "^3.9.0",
+    "protobufjs": "^7.2.3",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "keywords": [
+    "aggregator",
+    "microservices",
+    "grpc"
+  ],
+  "author": "",
+  "license": "ISC"
+}

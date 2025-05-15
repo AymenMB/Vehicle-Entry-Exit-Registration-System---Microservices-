@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package platedetection;
+
+// The plate detection service definition
+service PlateDetectionService {
+  // Send a car image and receive plate detection results
+  rpc DetectPlate (PlateRequest) returns (PlateResponse) {}
+}
+
+// The request message containing the car image
+message PlateRequest {
+  bytes image = 1;  // The image as bytes
+  string filename = 2;  // Original filename (optional)
+}
+
+// The response message containing the plate detection results
+message PlateResponse {
+  string plate_number = 1;  // The detected plate number
+  float confidence = 2;  // Confidence score
+  string error_message = 3;  // Error message if any
+  bool success = 4;  // Whether the detection was successful
+}

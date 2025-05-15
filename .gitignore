@@ -1,0 +1,88 @@
+# .gitignore for Vehicle Entry/Exit Registration System
+# Exclude Python virtual environments
+aiplate_env/
+
+# Exclude model folders (large files, not needed for code)
+cin/model/
+detect/model/
+detect/model_platecar/
+detect/plate_ex/
+cin/model_meta/
+
+# Exclude logs and temp files
+logs/
+*.log
+*.tmp
+
+# Exclude images except for documentation screenshots
+imgs/*
+!imgs/dashboard.png
+!imgs/history.png
+!imgs/scan.png
+
+# Exclude uploads and data (runtime/generated)
+api_gateway/uploads/
+api_gateway/data/
+
+# Exclude environment files
+.env
+api_gateway/.env
+registration_consumer/.env
+
+# Exclude node_modules and Python cache
+**/node_modules/
+**/__pycache__/
+
+# Exclude database and test artifacts
+registration_consumer/db/
+
+# Exclude unnecessary batch scripts (keep only essential ones)
+install_kafka_deps.bat
+install_mongodb_deps.bat
+install_mongodb.bat
+kafka_dev_tools.bat
+kafka_docker.bat
+kafka_setup.bat
+run_system.bat
+setup_environment.bat
+start_system.bat
+stop_system.ps1
+run_system.ps1
+setup_environment.ps1
+check_status.ps1
+diagnostic.bat
+diagnostic.ps1
+
+# Exclude architecture diagram source if not needed
+architecture.dot
+
+# Exclude other test images
+cin/*.jpg
+detect/*.jpg
+imgs/*.jpg
+
+# Exclude database browser test scripts
+test_mongodb_browser.bat
+test_mongodb.bat
+test_mongodb.ps1
+verify_mongodb.ps1
+view_mongodb_data.ps1
+
+# Exclude system verification scripts
+verify_system.bat
+
+# Exclude gRPC regeneration scripts
+regenerate_grpc.bat
+regenerate_grpc.ps1
+
+# Exclude miscellaneous files
+*.bak
+*.swp
+*.swo
+
+# Exclude README and documentation images only if not needed
+# (Uncomment if you want to exclude all images except those referenced in README)
+# imgs/*
+# !imgs/dashboard.png
+# !imgs/history.png
+# !imgs/scan.png
