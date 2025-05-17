@@ -136,12 +136,16 @@ async function processRegistration(cinImageBuffer, cinFilename, vehicleImageBuff
         logger.info(`- success: ${plateResponse.success}`);
         logger.info(`- plate_number: "${plateResponse.plate_number || 'none'}"`);
         logger.info(`- confidence: ${plateResponse.confidence || 0}`);
-        logger.info(`- error_message: "${plateResponse.error_message || 'none'}"`);
-          // Extract and format the data correctly
+        logger.info(`- error_message: "${plateResponse.error_message || 'none'}"`);        // Extract and format the data correctly
+        const firstName = cinResponse.name || "";
+        const lastName = cinResponse.lastname || "";
+        const fullName = `${firstName} ${lastName}`;
+        
         const cleanedCinData = {
             id_number: cinResponse.id_number || "",
-            name: cinResponse.name || "",
-            lastname: cinResponse.lastname || "",
+            name: firstName,
+            lastname: lastName,
+            fullName: fullName, // Added full name with space
             confidence_id: parseFloat(cinResponse.confidence_id || 0.0),
             confidence_name: parseFloat(cinResponse.confidence_name || 0.0),
             confidence_lastname: parseFloat(cinResponse.confidence_lastname || 0.0),

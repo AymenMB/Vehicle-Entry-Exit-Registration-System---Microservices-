@@ -21,11 +21,11 @@ const registrationSchema = new mongoose.Schema({
     region: String,
     vehicleType: String,
     detectedAt: Date
-  },
-  cinData: {
+  },  cinData: {
     idNumber: String,
     firstName: String,
     lastName: String,
+    fullName: String,
     birthDate: String,
     expiryDate: String,
     extractedAt: Date

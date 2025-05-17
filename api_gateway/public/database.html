@@ -618,7 +618,7 @@
         // Create a card for a single registration
         function createRegistrationCard(registration) {
             const col = document.createElement('div');
-            col.className = 'col-md-6';
+            col.className = 'col-md-6 mb-3';
             
             const typeClass = registration.type === 'entry' ? 'badge-entry' : 'badge-exit';
             const typeText = registration.type === 'entry' ? 'Entry' : 'Exit';
@@ -626,56 +626,69 @@
             const timestamp = new Date(registration.timestamp);
             const formattedDate = timestamp.toLocaleString();
             
-            let plateHtml = '<p class="text-muted">No plate data</p>';
-            if (registration.plateData && registration.plateData.plateNumber) {
-                const confidence = registration.plateData.confidence 
-                    ? `<small class="text-muted">(${Math.round(registration.plateData.confidence * 100)}% confidence)</small>` 
-                    : '';
-                plateHtml = `<h5>${registration.plateData.plateNumber} ${confidence}</h5>`;
-            }
+            // Get full name from CIN data
+            const fullName = registration.cinData && registration.cinData.fullName ? 
+                registration.cinData.fullName : 
+                (registration.cinData ? `${registration.cinData.firstName || registration.cinData.name || ''} ${registration.cinData.lastName || registration.cinData.lastname || ''}` : 'N/A');
             
-            let cinHtml = '<p class="text-muted">No CIN data</p>';
-            if (registration.cinData) {
-                const name = registration.cinData.firstName || registration.cinData.name || '';
-                const lastName = registration.cinData.lastName || registration.cinData.lastname || '';
-                const idNumber = registration.cinData.idNumber || '';
-                
-                cinHtml = `
-                    <h5>${idNumber}</h5>
-                    <p>${name} ${lastName}</p>
-                `;
-            }
+            // Get plate number
+            const plateNumber = registration.plateData && registration.plateData.plateNumber ? 
+                registration.plateData.plateNumber : 'N/A';
+            
+            // Create a unique ID for the collapse element
+            const collapseId = `collapse-${registration.registrationId}`;
             
             col.innerHTML = `
                 <div class="card registration-card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="card-header d-flex justify-content-between align-items-center py-2">
                         <div>
                             <span class="badge ${typeClass}">${typeText}</span>
-                            <small class="text-muted ms-2">${formattedDate}</small>
+                            <small class="text-muted ms-2">${formattedDate.split(',')[0]}</small>
                         </div>
                         <button class="btn btn-sm btn-outline-danger delete-btn" data-id="${registration.registrationId}">
-                            <i class="bi bi-trash"></i> Delete
+                            <i class="bi bi-trash"></i>
                         </button>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="card-subtitle mb-2 text-muted">Plate Information</h6>
-                                ${plateHtml}
+                    <div class="card-body py-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${fullName}</strong>
+                                <div class="text-muted small">Plate: ${plateNumber}</div>
                             </div>
-                            <div class="col-md-6">
-                                <h6 class="card-subtitle mb-2 text-muted">CIN Information</h6>
-                                ${cinHtml}
+                            <button class="btn btn-sm btn-link details-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}">
+                                <i class="fas fa-chevron-down"></i> Details
+                            </button>
+                        </div>
+                        
+                        <div class="collapse mt-3" id="${collapseId}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="card-subtitle mb-2 text-muted">Person Information</h6>
+                                    <p class="mb-1"><strong>ID Number:</strong> 
+                                    ${registration.cinData && registration.cinData.idNumber ? registration.cinData.idNumber : 'N/A'}</p>
+                                    <p class="mb-1"><strong>First Name:</strong> 
+                                    ${registration.cinData && (registration.cinData.firstName || registration.cinData.name) ? 
+                                      (registration.cinData.firstName || registration.cinData.name) : 'N/A'}</p>
+                                    <p class="mb-1"><strong>Last Name:</strong> 
+                                    ${registration.cinData && (registration.cinData.lastName || registration.cinData.lastname) ? 
+                                      (registration.cinData.lastName || registration.cinData.lastname) : 'N/A'}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="card-subtitle mb-2 text-muted">Vehicle Information</h6>
+                                    <p class="mb-1"><strong>Confidence:</strong> 
+                                    ${registration.plateData && registration.plateData.confidence ? 
+                                      `${Math.round(registration.plateData.confidence * 100)}%` : 'N/A'}</p>
+                                    <p class="mb-1"><strong>Registration ID:</strong> ${registration.registrationId}</p>
+                                    <p class="mb-1"><strong>Full Time:</strong> ${formattedDate}</p>
+                                </div>
                             </div>
                         </div>
-                        <hr>
-                        <small class="text-muted">Registration ID: ${registration.registrationId}</small>
                     </div>
-                </div>
-            `;
+                </div>`;
             
             // Add event listener for delete button
-            col.querySelector('.delete-btn').addEventListener('click', () => {
+            col.querySelector('.delete-btn').addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card expansion when clicking delete
                 showDeleteModal(registration.registrationId);
             });
             

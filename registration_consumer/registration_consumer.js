@@ -92,11 +92,15 @@ async function getUniqueCounts() {
  * Process a registration event
  * @param {Object} registration Registration data
  */
-async function processRegistration(registration) {
-    try {
+async function processRegistration(registration) {    try {
         // Add timestamp if not present
         if (!registration.timestamp) {
             registration.timestamp = new Date().toISOString();
+        }        // Generate fullName from firstName and lastName if not present
+        if (registration.cinData && !registration.cinData.fullName) {
+            const firstName = registration.cinData.firstName || registration.cinData.name || '';
+            const lastName = registration.cinData.lastName || registration.cinData.lastname || '';
+            registration.cinData.fullName = `${firstName} ${lastName}`;
         }
         
         // Create a new registration document in MongoDB

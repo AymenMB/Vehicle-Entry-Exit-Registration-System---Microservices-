@@ -22,6 +22,10 @@ const registrationSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  fullName: {
+    type: String,
+    required: false
+  },
   entryTime: {
     type: Date,
     required: false

@@ -40,21 +40,27 @@ flowchart LR
     subgraph Client
         Web[Web UI]
     end
-    subgraph Gateway[API Gateway (Node.js)]
+    subgraph Gateway
         REST[REST API]
         GQL[GraphQL API]
     end
-    subgraph Aggregator[Aggregator Service (Node.js)]
+    subgraph Aggregator
+        Agg["Aggregator Service (Node.js)"]
     end
-    subgraph CIN[CIN Extraction Service (Python)]
+    subgraph CIN
+        CinService["CIN Extraction Service (Python)"]
     end
-    subgraph Plate[Plate Detection Service (Python)]
+    subgraph Plate
+        PlateService["Plate Detection Service (Python)"]
     end
-    subgraph Consumer[Registration Consumer (Node.js)]
+    subgraph Consumer
+        Cons["Registration Consumer (Node.js)"]
     end
-    subgraph DB[MongoDB]
+    subgraph DB
+        MongoDB[MongoDB]
     end
-    subgraph Kafka[Kafka Broker]
+    subgraph Kafka
+        KafkaBroker[Kafka Broker]
     end
 
     Web-->|REST/GraphQL|Gateway
@@ -71,7 +77,7 @@ flowchart LR
 
 ## Component Breakdown
 
-### 1. **API Gateway**
+### 1. **Gateway (API Gateway)**
 - **Tech:** Node.js, Express, Apollo Server
 - **Role:** Entry point for all client requests (REST/GraphQL). Handles authentication, validation, and routes requests to the aggregator or directly to MongoDB. Publishes registration events to Kafka.
 
@@ -94,7 +100,7 @@ flowchart LR
 ### 6. **MongoDB**
 - **Role:** Stores all registration records, including vehicle, CIN, timestamps, and event types.
 
-### 7. **Kafka**
+### 7. **Kafka Broker**
 - **Role:** Event streaming backbone for decoupled, scalable communication between services.
 
 ---
@@ -111,7 +117,7 @@ flowchart LR
 ![History](imgs/history.png)
 
 ### Database Browser
-![Database Browser](imgs/history.png)
+![Database Browser](imgs/bd_screen.png)
 
 ---
 
@@ -201,16 +207,33 @@ git push -u origin main
 ---
 
 ## License
-This project is licensed under the MIT License.
-4. **Kafka** - For event-driven communication and asynchronous processing
 
-### Components
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-1. **API Gateway**: Entry point for client applications, exposing REST and GraphQL endpoints
-2. **Aggregator**: Coordinates communication between microservices
-3. **CIN Extraction Service**: Analyzes ID card images and extracts personal information
-4. **Plate Detection Service**: Analyzes vehicle images and extracts license plate information
-5. **Kafka Registration Consumer**: Processes registration events from Kafka for analytics and storage
+## System Architecture Details
+
+### Data Flow
+
+1. Client submits ID card and vehicle images through the web interface
+2. API Gateway receives the request through REST or GraphQL endpoints
+3. API Gateway forwards the request to the Aggregator
+4. Aggregator sends the ID card image to the CIN Extraction Service via gRPC
+5. Aggregator sends the vehicle image to the Plate Detection Service via gRPC
+6. Both services process the images and return extracted data
+7. Aggregator combines the results and returns them to the API Gateway
+8. API Gateway formats the response and returns it to the client
+9. API Gateway publishes the registration event to Kafka
+10. Registration Consumer processes the Kafka event for analytics and storage
+
+### Communication Protocols
+
+- **Client ↔ API Gateway**: REST or GraphQL over HTTP
+- **API Gateway ↔ Aggregator**: gRPC
+- **Aggregator ↔ Microservices**: gRPC
+- **API Gateway → Kafka**: Event publishing via Kafka protocol
+- **Kafka → Registration Consumer**: Event consumption via Kafka protocol
+
+---
 
 ## Getting Started
 
