@@ -33,7 +33,7 @@ The Vehicle Entry/Exit Registration System is a microservices-based platform des
 
 ## Architecture
 
-### High-Level Architecture Diagram (Mermaid)
+### High Level Architecture Diagram (Mermaid)
 
 ```mermaid
 flowchart LR
