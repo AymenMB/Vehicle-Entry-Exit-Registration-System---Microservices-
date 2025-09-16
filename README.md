@@ -177,7 +177,7 @@ start_system.bat
 - Scan a CIN card and vehicle plate using the web interface
 - View registration history and statistics
 - Browse the MongoDB database via the integrated browser
-- Use REST or GraphQL APIs for programmatic access
+- Use REST or graphQL APIs for programmatic access
 
 ---
 
